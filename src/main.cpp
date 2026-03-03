@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <string>
 
-void generateHeader(std::string title) {
-    std::cout << "<!DOCTYPE html>" << '\n'
+void generateHeader(std::string title, std::ostream& os) {
+    os << "<!DOCTYPE html>" << '\n'
               << "<html lang=\"en\">" << '\n'
               << "<head>" << '\n'
               << "<meta charset=\"UTF-8\">" << '\n'
@@ -19,15 +19,15 @@ void generateHeader(std::string title) {
 }
 
 
-void generateFoot() {
-    std::cout << "</body>" << '\n'
+void generateFoot(std::ostream& os) {
+    os << "</body>" << '\n'
               << "</html>" << std::endl;
 }
 
 
-void parseItalicBold(std::istream& is) {
+void parseItalicBold(std::istream& is, std::ostream& os) {
     char c;
-    std::cout << "<b><i>";
+    os << "<b><i>";
     while (!is.eof()) {
         c = is.get();
         if (c == '*') {
@@ -37,22 +37,22 @@ void parseItalicBold(std::istream& is) {
         } else if (c == '\n') {
             throw std::invalid_argument("Unexpected line break");   
         } else {
-            std::cout << c;
+            os << c;
         }
     }
-    std::cout << "</i></b>" << std::flush;
+    os << "</i></b>" << std::flush;
 }
 
 
-void parseBold(std::istream& is) {
+void parseBold(std::istream& is, std::ostream& os) {
     char c;
     if (!is.eof()) {
         c = is.get();
         if (c == '*') {
-            parseItalicBold(is);
+            parseItalicBold(is, os);
         } else {
             is.putback(c);
-            std::cout << "<b>";
+            os << "<b>";
             while (!is.eof()) {
                 c = is.get();
                 if (c == '*') {
@@ -61,24 +61,24 @@ void parseBold(std::istream& is) {
                 } else if (c == '\n') {
                     throw std::invalid_argument("Unexpected line break");   
                 } else {
-                    std::cout << c;
+                    os << c;
                 }
             }
-            std::cout << "</b>" << std::flush;
+            os << "</b>" << std::flush;
         }
     }
 }
 
 
-void parseItalic(std::istream& is) {
+void parseItalic(std::istream& is, std::ostream& os) {
     char c;
     if (!is.eof()) {
         c = is.get();
         if (c == '*') {
-            parseBold(is);
+            parseBold(is, os);
         } else {
             is.putback(c);
-            std::cout << "<i>";
+            os << "<i>";
             while (!is.eof()) {
                 c = is.get();
                 if (c == '*') {
@@ -86,39 +86,39 @@ void parseItalic(std::istream& is) {
                 } else if (c == '\n') {
                     throw std::invalid_argument("Unexpected line break");   
                 } else {
-                    std::cout << c;
+                    os << c;
                 }
             }
-            std::cout << "</i>" << std::flush;
+            os << "</i>" << std::flush;
         }
     } 
 }
 
 
-void parseText(std::istream& is) {
+void parseText(std::istream& is, std::ostream& os) {
     char c;
     while (!is.eof()) {
         c = is.get();
         if (c == '*') {
-            parseItalic(is);
+            parseItalic(is, os);
         } else if (c == '\n') {
             break;
         } else {
-            std::cout << c;
+            os << c;
         }
     }
 }
 
 
-void parseTitle(std::istream& is, int level) {
+void parseTitle(std::istream& is, std::ostream& os, int level) {
     char c = is.get();
     if (c) {
         if (c == '#' && level <= 6) {
-            parseTitle(is, level + 1);
+            parseTitle(is, os, level + 1);
         } else {
-            std::cout << "<h" << level << ">";
-            parseText(is);
-            std::cout << "</h" << level << ">" << std::endl;
+            os << "<h" << level << ">";
+            parseText(is, os);
+            os << "</h" << level << ">" << std::endl;
         }
     } else {
         throw std::invalid_argument("Empty title provided");
@@ -126,32 +126,32 @@ void parseTitle(std::istream& is, int level) {
 }
 
 
-void parseParagraph(std::istream& is) {
-    std::cout << "<p>" << '\n';
-    parseText(is);
-    std::cout << '\n' << "</p>" << std::endl;
+void parseParagraph(std::istream& is, std::ostream& os) {
+    os << "<p>" << '\n';
+    parseText(is, os);
+    os << '\n' << "</p>" << std::endl;
 }
 
 
-void parseMarkDown(std::istream& is) {
+void parseMarkDown(std::istream& is, std::ostream& os) {
     char c;
     while (!is.eof()) {
         c = is.get();
         if (c == '#') {
-            parseTitle(is, 1);
+            parseTitle(is, os, 1);
         } else if (c != '\n') {
             is.putback(c);
-            parseParagraph(is);
+            parseParagraph(is, os);
         }
         is >> std::ws;
     }
 }
 
 
-void generateHTML(std::istream& is) {
-    generateHeader("page");
-    parseMarkDown(is);
-    generateFoot();
+void generateHTML(std::istream& is, std::ostream& os) {
+    generateHeader("page", os);
+    parseMarkDown(is, os);
+    generateFoot(os);
 }
 
 
@@ -167,7 +167,7 @@ int main (int argc, char *argv[]) {
     std::ifstream file {argv[1]};
 
     if (file.is_open()) {
-        generateHTML(file);
+        generateHTML(file, std::cout);
     }
 
     return 0;
