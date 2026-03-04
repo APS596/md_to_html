@@ -43,10 +43,10 @@ std::string tokenName(TokenType t) {
 
 
 std::string Token::getInfo() {
-    return std::string(std::format("{} on {}:{}", tokenName(type), line, line_pos));
+    return std::string(std::format("{} on {}:{} {}", tokenName(type), line, line_pos, length));
 }
 
 std::ostream& operator<<(std::ostream& os, Token t) {
-    os << t.getInfo() << std::endl;
+    os << t.getInfo();
     return os;
 }

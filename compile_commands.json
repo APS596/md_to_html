@@ -1,18 +1,5 @@
 [
   {
-    "file": "src/main.cpp",
-    "arguments": [
-      "g++",
-      "-std=c++23",
-      "-Iinclude",
-      "src/main.cpp",
-      "-o",
-      "build/mdhtml"
-    ],
-    "directory": "/media/valentin/Documents/Programmes/mdhtml",
-    "output": "build/mdhtml"
-  },
-  {
     "file": "src/token.cpp",
     "arguments": [
       "g++",
@@ -32,6 +19,32 @@
       "-std=c++23",
       "-Iinclude",
       "src/parser.cpp",
+      "-o",
+      "build/mdhtml"
+    ],
+    "directory": "/media/valentin/Documents/Programmes/mdhtml",
+    "output": "build/mdhtml"
+  },
+  {
+    "file": "src/tokenizer.cpp",
+    "arguments": [
+      "g++",
+      "-std=c++23",
+      "-Iinclude",
+      "src/tokenizer.cpp",
+      "-o",
+      "build/mdhtml"
+    ],
+    "directory": "/media/valentin/Documents/Programmes/mdhtml",
+    "output": "build/mdhtml"
+  },
+  {
+    "file": "src/main.cpp",
+    "arguments": [
+      "g++",
+      "-std=c++23",
+      "-Iinclude",
+      "src/main.cpp",
       "-o",
       "build/mdhtml"
     ],

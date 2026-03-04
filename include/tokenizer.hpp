@@ -31,6 +31,9 @@ class Tokenizer {
         unsigned int tab_level;
         unsigned int heading_level;
     
+        unsigned int tok_pos;
+        unsigned int tok_line;
+        unsigned int tok_line_pos;
 };
 
 
