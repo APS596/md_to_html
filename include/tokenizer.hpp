@@ -18,9 +18,7 @@ class Tokenizer {
         Token parseNewLine(std::istream& is, char& c);
         Token parseHeading(std::istream& is, char& c);
         Token parseText(std::istream& is, char& c);
-        Token parseItalic(std::istream& is, char& c);
-        Token parseBold(std::istream& is, char& c);
-        Token parseItalicBold(std::istream& is, char& c);
+        Token parseEmphasized(std::istream& is, char& c);
         /**
          * @brief tokenize input source
          * @param is input stream

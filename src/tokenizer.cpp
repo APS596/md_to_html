@@ -1,6 +1,13 @@
+/**
+ * @file tokenizer.cpp
+ * @brief Tokenization of the code
+ */
+
 #include <stdexcept>
+
 #include <token.hpp>
 #include <tokenizer.hpp>
+
 
 Tokenizer::Tokenizer():
     heading(false),
@@ -23,11 +30,13 @@ Tokenizer::~Tokenizer() {}
 bool isText(char c) {
     switch (c) {
         case '\n': return false;
+        case '*':  return false;
         default: return true;
     }
 }
 
 Token Tokenizer::parseNext(std::istream& is) {
+
 
     char c;
     TokenType t;
@@ -36,17 +45,14 @@ Token Tokenizer::parseNext(std::istream& is) {
     tok_line = line;
     tok_line_pos = line_pos;
 
-    c = is.get();
-
+    is.get(c);
     if (c == '\n') {
         return parseNewLine(is, c);
-    } 
-
-    else if (c == '#' && beg_line) {
+    } else if (c == '#' && beg_line) {
         return parseHeading(is, c);
-    }
-
-    else {
+    } else if (c == '*') {
+        return parseEmphasized(is, c);
+    } else {
         return parseText(is, c);
     }
 }
@@ -62,13 +68,9 @@ Token Tokenizer::parseNewLine(std::istream& is, char& c) {
 Token Tokenizer::parseHeading(std::istream& is, char& c) {
     TokenType t;
     beg_line = false;
-    while (c == '#') {
+    heading_level = 1;
+    while (is.get(c) && c == '#') {
         heading_level ++;
-        if (!is.eof()) {
-            c = is.get();
-        } else {
-            throw std::invalid_argument(std::format("Unexpected line return after heading token on line {}", line));
-        }
     }
     is.putback(c);
     switch (heading_level) {
@@ -92,35 +94,60 @@ Token Tokenizer::parseText(std::istream& is, char& c) {
         pos ++;
         line_pos ++;
         unsigned int l = 1;
-        while (isText(c)) {
-            if (is.eof()) {
+        while (is.get(c)) {
+            if (!isText(c)) {
                 break;
             }
-            c = is.get();
             pos ++;
             line_pos ++;
             l ++;
         }
-        return Token(TokenType::Text, tok_pos, l-1, tok_line, tok_line_pos);
+        is.putback(c);
+        return Token(TokenType::Text, tok_pos, l, tok_line, tok_line_pos);
 }
 
-Token Tokenizer::parseItalic(std::istream& is, char& c) {
-    return Token(TokenType::Eof, 0, 0, 0, 0);
+
+Token Tokenizer::parseEmphasized(std::istream& is, char& c) {
+
+    char tmp1, tmp2, tmp3;
+    int tok_l = 0;
+    TokenType t;
+    is.get(tmp1);
+
+    if (tmp1 == '*') {
+        is.get(tmp2);
+        if (tmp2 == '*') {
+            is.get(tmp3);
+            if (tmp3 == '*') {
+               throw std::invalid_argument("unexpected '*' character, consider using \\*");
+            } else {
+                tok_l = 3;
+                t = TokenType::ItalicBold;
+                is.putback(tmp3);
+            }
+        } else {
+            tok_l = 2;
+            t = TokenType::Bold;
+            is.putback(tmp2);
+        }
+    } else {
+        tok_l = 1;
+        t = TokenType::Italic;
+        is.putback(tmp1);
+    }
+    pos += tok_l;
+    line_pos += tok_l;
+    return Token(t, tok_pos, tok_l, tok_line, tok_line_pos);
 }
 
-Token Tokenizer::parseBold(std::istream& is, char& c) {
-    return Token(TokenType::Eof, 0, 0, 0, 0);
-}
-
-Token Tokenizer::parseItalicBold(std::istream& is, char& c) {
-    return Token(TokenType::Eof, 0, 0, 0, 0);
-}
 
 std::vector<Token> Tokenizer::tokenize(std::istream& is) {
     
     std::vector<Token> tokens {};
+    char c;
 
-    while (!is.eof()) {
+    while (is.get(c)) {
+        is.putback(c);
         tokens.push_back(parseNext(is));    
     }
     std::cout << "--" << pos << std::endl;
