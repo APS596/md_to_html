@@ -1,4 +1,5 @@
 #include <format>
+
 #include <token.hpp>
 
 Token::Token(
@@ -16,11 +17,15 @@ Token::Token(
 {}
 
 
+Token::~Token() {}
+
+
 std::string tokenName(TokenType t) {
     switch (t) {
         case TokenType::Return:     return "\\n";
         case TokenType::Tab:        return "\\t";
         case TokenType::Text:       return "Text";
+        case TokenType::Eof:        return "EOF";
         case TokenType::Title1:     return "Heading1";
         case TokenType::Title2:     return "Heading2";
         case TokenType::Title3:     return "Heading3";
@@ -32,11 +37,16 @@ std::string tokenName(TokenType t) {
         case TokenType::ItalicBold: return "ItalicBold";
         case TokenType::BlockQuote: return "BlockQuote";
         case TokenType::Code:       return "Code";
-        default: return "too bad, not implemented !"
+        default: return "too bad, not implemented !";
     }
 }
 
 
-Token::getInfo() {
-    return std::string(std::format("{} on {}:{}", tokenName(type), line, line_pos);
+std::string Token::getInfo() {
+    return std::string(std::format("{} on {}:{}", tokenName(type), line, line_pos));
+}
+
+std::ostream& operator<<(std::ostream& os, Token t) {
+    os << t.getInfo() << std::endl;
+    return os;
 }

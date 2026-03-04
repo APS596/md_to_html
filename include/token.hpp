@@ -4,6 +4,8 @@
  * @author APS596
  */
 
+#pragma once
+
 #include <iostream>
 #include <string>
 
@@ -14,6 +16,7 @@
 enum class TokenType {
     Return,               //< '\n' caracter
     Tab,                  //< '\t' or "    " (4 spaces)
+    Eof,                  //< end of source
     Text,                 //< Raw text 
     Title1,               //< Level 1 heading
     Title2,               //< Level 2 heading
@@ -68,10 +71,6 @@ class Token {
          */
         std::string getInfo();
 
-        /**
-         * Wrapper to getInfo()
-         */
-        std::ostream& operator<<(std::ostream& os);
 
         TokenType type;            //< type of the token
 
@@ -83,3 +82,8 @@ class Token {
         unsigned int line_pos;     //< what is its position on the line
 };
 
+
+/**
+ * Wrapper to getInfo()
+ */
+std::ostream& operator<<(std::ostream& os, Token t);

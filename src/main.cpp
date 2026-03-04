@@ -7,7 +7,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <parser.hpp>
+#include <token.hpp>
+#include <tokenizer.hpp>
 
 int main (int argc, char *argv[]) {
     
@@ -19,7 +20,13 @@ int main (int argc, char *argv[]) {
             throw std::invalid_argument(std::format("Unable to open file {}", argv[1]));
         }
             
-        parseMarkdown(source);
+        auto tokenizer = Tokenizer();
+
+        auto tokens = tokenizer.tokenize(source);
+
+        for (auto& t: tokens) {
+            std::cout << t << std::endl;
+        }
 
     } else {
         std::cout << "Markdown HTML converter. Usage mdhtml source.md > page.html" << std::endl;
