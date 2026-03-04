@@ -20,6 +20,13 @@ Tokenizer::Tokenizer():
 
 Tokenizer::~Tokenizer() {}
 
+bool isText(char c) {
+    switch (c) {
+        case '\n': return false;
+        default: return true;
+    }
+}
+
 Token Tokenizer::parseNext(std::istream& is) {
 
     char c;
@@ -70,7 +77,17 @@ Token Tokenizer::parseNext(std::istream& is) {
         beg_line = false;
         pos ++;
         line_pos ++;
-        return Token(TokenType::Eof, tok_pos, 1, tok_line, tok_line_pos);
+        unsigned int l = 1;
+        while (isText(c)) {
+            if (is.eof()) {
+                break;
+            }
+            c = is.get();
+            pos ++;
+            line_pos ++;
+            l ++;
+        }
+        return Token(TokenType::Text, tok_pos, l-1, tok_line, tok_line_pos);
     }
 }
 
