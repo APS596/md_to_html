@@ -10,12 +10,6 @@
 
 
 Tokenizer::Tokenizer():
-    heading(false),
-    text(false),
-    code(false),
-    italic(false),
-    bold(false),
-    italic_bold(false),
     beg_line(true),
 
     line(1),

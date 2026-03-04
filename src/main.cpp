@@ -4,11 +4,13 @@
  * @author APS596
  */
 
+#include <ios>
 #include <iostream>
 #include <fstream>
 
 #include <token.hpp>
 #include <tokenizer.hpp>
+#include <parser.hpp>
 
 int main (int argc, char *argv[]) {
     
@@ -24,9 +26,18 @@ int main (int argc, char *argv[]) {
 
         auto tokens = tokenizer.tokenize(source);
 
+        std::cout << "Token generation ... \n" << std::endl;
+
         for (auto& t: tokens) {
             std::cout << t << std::endl;
         }
+
+        std::cout << "======================================" << std::endl;
+
+        std::cout << "grammar check ..." << std::endl;
+        bool res = checkGrammar(tokens);
+        std::cout << std::boolalpha << res << std::endl;
+
 
     } else {
         std::cout << "Markdown HTML converter. Usage mdhtml source.md > page.html" << std::endl;

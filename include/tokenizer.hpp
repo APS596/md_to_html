@@ -26,8 +26,7 @@ class Tokenizer {
         std::vector<Token> tokenize(std::istream& is);
 
     private:
-
-        bool heading, text, code, italic, bold, italic_bold, beg_line;
+        bool beg_line;
 
         unsigned int line;
         unsigned int line_pos;
