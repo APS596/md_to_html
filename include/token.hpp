@@ -71,6 +71,10 @@ class Token {
          */
         std::string getInfo();
 
+        /**
+         * @brief get token position in input stream
+         */
+        unsigned int getPos();
 
         TokenType type;            //< type of the token
 
