@@ -58,7 +58,8 @@ class Token {
             unsigned int pos,
             unsigned int length,
             unsigned int line,
-            unsigned int line_pos
+            unsigned int line_pos,
+            std::string  text
         );
         Token(Token &&) = default;
         Token(const Token &) = default;
@@ -76,6 +77,16 @@ class Token {
          */
         unsigned int getPos();
 
+        /**
+         * @brief length of the token
+         */
+        unsigned int getLength();
+
+        /**
+         * @brief token string
+         */
+        std::string getText();
+
         TokenType type;            //< type of the token
 
     private:
@@ -84,6 +95,8 @@ class Token {
 
         unsigned int line;         //< on which line is this token
         unsigned int line_pos;     //< what is its position on the line
+
+        std::string text;
 };
 
 

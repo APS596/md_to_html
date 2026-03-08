@@ -1,4 +1,3 @@
-#include <concepts>
 #include <format>
 
 #include <token.hpp>
@@ -8,13 +7,15 @@ Token::Token(
     unsigned int pos,
     unsigned int length,
     unsigned int line,
-    unsigned int line_pos
+    unsigned int line_pos,
+    std::string  text
 ):
     type(t),
     pos(pos),
     length(length),
     line(line),
-    line_pos(line_pos)
+    line_pos(line_pos),
+    text(text)
 {}
 
 
@@ -44,7 +45,7 @@ std::string tokenName(TokenType t) {
 
 
 std::string Token::getInfo() {
-    return std::string(std::format("{} on {}:{}, l:{}, pos:{}", tokenName(type), line, line_pos, length, pos));
+    return std::string(std::format("{} on {}:{}, l:{}, pos:{}, content : {}", tokenName(type), line, line_pos, length, pos, text));
 }
 
 
@@ -52,6 +53,14 @@ unsigned int Token::getPos() {
     return pos;
 }
 
+
+unsigned int Token::getLength() {
+    return length;
+}
+
+std::string Token::getText() {
+    return text;
+}
 
 std::ostream& operator<<(std::ostream& os, Token t) {
     os << t.getInfo();

@@ -56,7 +56,7 @@ Token Tokenizer::parseNewLine(std::istream& is, char& c) {
         line_pos = 1;
         pos ++;
         beg_line = true;
-        return Token(TokenType::Return, tok_pos, 1, tok_line, tok_line_pos);
+        return Token(TokenType::Return, tok_pos, 1, tok_line, tok_line_pos, std::string(1, '\n'));
 }
 
 Token Tokenizer::parseHeading(std::istream& is, char& c) {
@@ -78,7 +78,7 @@ Token Tokenizer::parseHeading(std::istream& is, char& c) {
     }
     pos += heading_level;
     line_pos += heading_level;
-    auto tok = Token(t, tok_pos, heading_level, tok_line, tok_line_pos);
+    auto tok = Token(t, tok_pos, heading_level, tok_line, tok_line_pos, std::string(heading_level, '#'));
     heading_level = 0;
     return tok; 
 }
@@ -87,17 +87,20 @@ Token Tokenizer::parseText(std::istream& is, char& c) {
         beg_line = false;
         pos ++;
         line_pos ++;
+        std::string buf;
+        buf += c;
         unsigned int l = 1;
         while (is.get(c)) {
             if (!isText(c)) {
                 break;
             }
+            buf += c;
             pos ++;
             line_pos ++;
             l ++;
         }
         is.putback(c);
-        return Token(TokenType::Text, tok_pos, l, tok_line, tok_line_pos);
+        return Token(TokenType::Text, tok_pos, l, tok_line, tok_line_pos, buf);
 }
 
 
@@ -106,6 +109,7 @@ Token Tokenizer::parseEmphasized(std::istream& is, char& c) {
     char tmp1, tmp2, tmp3;
     int tok_l = 0;
     TokenType t;
+    std::string buf;
     is.get(tmp1);
 
     if (tmp1 == '*') {
@@ -116,22 +120,25 @@ Token Tokenizer::parseEmphasized(std::istream& is, char& c) {
                throw std::invalid_argument("unexpected '*' character, consider using \\*");
             } else {
                 tok_l = 3;
+                buf = "***";
                 t = TokenType::ItalicBold;
                 is.putback(tmp3);
             }
         } else {
             tok_l = 2;
+            buf = "**";
             t = TokenType::Bold;
             is.putback(tmp2);
         }
     } else {
         tok_l = 1;
+        buf = "*";
         t = TokenType::Italic;
         is.putback(tmp1);
     }
     pos += tok_l;
     line_pos += tok_l;
-    return Token(t, tok_pos, tok_l, tok_line, tok_line_pos);
+    return Token(t, tok_pos, tok_l, tok_line, tok_line_pos, buf);
 }
 
 
