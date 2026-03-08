@@ -1,5 +1,18 @@
 [
   {
+    "file": "src/generator.cpp",
+    "arguments": [
+      "g++",
+      "-std=c++23",
+      "-Iinclude",
+      "src/generator.cpp",
+      "-o",
+      "build/mdhtml"
+    ],
+    "directory": "/media/valentin/Documents/Programmes/mdhtml",
+    "output": "build/mdhtml"
+  },
+  {
     "file": "src/token.cpp",
     "arguments": [
       "g++",

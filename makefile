@@ -1,6 +1,6 @@
 all: build
 
-SRCS := src/token.cpp src/parser.cpp src/tokenizer.cpp src/main.cpp
+SRCS := src/generator.cpp src/token.cpp src/parser.cpp src/tokenizer.cpp src/main.cpp
 
 .PHONY: build
 build:

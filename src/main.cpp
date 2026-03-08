@@ -11,6 +11,7 @@
 #include <token.hpp>
 #include <tokenizer.hpp>
 #include <parser.hpp>
+#include <generator.hpp>
 
 int main (int argc, char *argv[]) {
     
@@ -38,6 +39,16 @@ int main (int argc, char *argv[]) {
         bool res = checkGrammar(tokens);
         std::cout << std::boolalpha << res << std::endl;
 
+        std::cout << "======================================" << std::endl;
+
+        std::cout << "Code generation\n" << std::endl;
+
+        source.clear();
+        source.seekg(0);
+
+        std::ofstream page {"page.html"};
+
+        generateHTML(tokens, source, page);
 
     } else {
         std::cout << "Markdown HTML converter. Usage mdhtml source.md > page.html" << std::endl;
